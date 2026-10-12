@@ -178,3 +178,7 @@ compilações seguintes, o Maven verifica primeiro o repositório local, encontr
 lá tudo o que precisa e não volta a descarregar nada, evitando o acesso à rede.
 Só volta a descarregar se for alterada a versão de uma dependência no
 `pom.xml` ou se o repositório local for apagado.
+
+
+## Documentação
+Site de documentação técnica (Javadoc): https://razoes24.github.io/Battleship2/
