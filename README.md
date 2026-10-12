@@ -143,9 +143,38 @@ Contributions are what make the open-source community such an amazing place to l
 
 ---
 
+
 ## 📄 License
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 **Maintained by:** [@britoeabreu](https://github.com/britoeabreu)  
 *Created for the Software Engineering students at ISCTE-IUL.*
+
+
+## Ficha laboratorial nº 2 - Parte B, Passo 2: Dependências do Maven
+
+### Pergunta 1: Como é que o Maven descobre quais são as dependências transitivas?
+
+O Maven descobre as dependências transitivas lendo o ficheiro `.pom` de cada
+biblioteca. Cada artefacto publicado no Maven Central inclui o seu próprio POM,
+onde declara as bibliotecas de que ele próprio depende. O Maven lê o `pom.xml`
+do projeto, obtém as dependências diretas e, para cada uma, descarrega e lê o
+respetivo POM para descobrir as suas dependências. Repete este processo
+recursivamente até construir a árvore completa de dependências.
+
+Por exemplo, o projeto declara diretamente `spring-boot-starter-web`, mas o POM
+desta biblioteca indica que depende de `spring-web`, `spring-webmvc`,
+`tomcat-embed-core`, `jackson-databind`, entre outras, que o Maven também
+descarrega automaticamente. A árvore completa pode ser consultada na janela
+Maven do IntelliJ (Dependencies) ou com o comando `mvn dependency:tree`.
+
+### Pergunta 2: Porque é que as compilações seguintes são mais rápidas?
+
+Na primeira compilação, o Maven descarrega do repositório remoto (Maven Central)
+os ficheiros `.pom` e `.jar` de todas as dependências, diretas e transitivas, e
+guarda-os no repositório local do computador (`~/.m2/repository`). Nas
+compilações seguintes, o Maven verifica primeiro o repositório local, encontra
+lá tudo o que precisa e não volta a descarregar nada, evitando o acesso à rede.
+Só volta a descarregar se for alterada a versão de uma dependência no
+`pom.xml` ou se o repositório local for apagado.
