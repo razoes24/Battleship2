@@ -1,0 +1,5 @@
+## 2. Fase de Caça e Acompanhamento de Acertos
+
+- **Padrão de Caça (Pesquisa Inicial):** Enquanto não tiver alvos identificados, os seus tiros devem seguir uma estratégia de padrão em "xadrez" (como as casas pretas ou brancas de um tabuleiro), com o objetivo de cobrir a maior área de água possível com o mínimo de tiros. Não dispare ao acaso.
+- **Acompanhamento de Acerto (Foco):** Assim que o resultado de um tiro for um acerto num navio (`hit`), a sua prioridade máxima nas rajadas seguintes é disparar nas posições imediatamente contíguas (ortogonais: Norte, Sul, Este, Oeste) a esse acerto para descobrir a orientação do navio.
+- **Fim do Foco:** Se o resultado do tiro indicar que o navio afundou, pare imediatamente de disparar nas posições contíguas a esse navio e retome o Padrão de Caça em áreas ainda inexploradas do tabuleiro.
