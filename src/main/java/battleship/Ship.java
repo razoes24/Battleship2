@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * The type Ship.
  */
-public abstract class Ship implements IShip
+public abstract class 	Ship implements IShip
 {
 	/**
 	 * The constant GALEAO.
