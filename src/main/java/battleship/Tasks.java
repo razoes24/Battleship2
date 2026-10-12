@@ -34,6 +34,7 @@ public class Tasks {
     private static final String STATUS = "estado";
     private static final String SIMULA = "simula";
     private static final String EXPORTAPDF = "exportapdf";
+    private static final String SCOREBOARD = "scoreboard";
 
     /**
      * This task also tests the fighting element of a round of three shots
@@ -82,13 +83,18 @@ public class Tasks {
                         game.printMyBoard(true, false);
 
                         if (game.getRemainingShips() == 0) {
+                            // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
+                            Scoreboard.add(game.getAlienMoves().size());
+                            // O programa termina a seguir, por isso exporta o PDF automaticamente
+                            exportPdf(historico);
                             game.over();
+                            System.exit(0);
                         }
                     }
                     break;
                 case SIMULA:
                     if (game != null) {
-                        while (game.getRemainingShips() > 0){
+                        while (game.getRemainingShips() > 0) {
                             // Guarda o JSON da jogada retornado pela randomEnemyFire
                             String jsonJogada = game.randomEnemyFire();
                             historico.add(jsonJogada);
@@ -103,7 +109,12 @@ public class Tasks {
                         }
 
                         if (game.getRemainingShips() == 0) {
+                            // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
+                            Scoreboard.add(game.getAlienMoves().size());
+                            // O programa termina a seguir, por isso exporta o PDF automaticamente
+                            exportPdf(historico);
                             game.over();
+                            System.exit(0);
                         }
                     }
                     break;
@@ -111,16 +122,14 @@ public class Tasks {
                     if (game != null)
                         game.printMyBoard(true, true);
                     break;
+                case SCOREBOARD:
+                    Scoreboard.show();
+                    break;
                 case AJUDA:
                     menuHelp();
                     break;
                 case EXPORTAPDF:
-                    try {
-                        PdfExporter.export(historico, "jogadas.pdf");
-                        System.out.println("PDF gerado com sucesso: jogadas.pdf");
-                    } catch (Exception e) {
-                        System.out.println("Erro ao gerar PDF: " + e.getMessage());
-                    }
+                    exportPdf(historico);
                     break;
                 default:
                     System.out.println("Que comando é esse??? Repete ...");
@@ -129,6 +138,20 @@ public class Tasks {
             command = in.next();
         }
         System.out.println(GOODBYE_MESSAGE);
+    }
+
+    /**
+     * Exports the move history to a PDF file.
+     *
+     * @param historico the list of moves (JSON strings)
+     */
+    private static void exportPdf(List<String> historico) {
+        try {
+            PdfExporter.export(historico, "jogadas.pdf");
+            System.out.println("PDF gerado com sucesso: jogadas.pdf");
+        } catch (Exception e) {
+            System.out.println("Erro ao gerar PDF: " + e.getMessage());
+        }
     }
 
     /**
@@ -144,6 +167,7 @@ public class Tasks {
         System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
         System.out.println("- " + SIMULA + ": Simula um jogo completo.");
         System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+        System.out.println("- " + SCOREBOARD + ": Mostra o scoreboard dos jogos anteriores.");
         System.out.println("- " + EXPORTAPDF + ": Exporta o histórico de jogadas para um ficheiro PDF.");
         System.out.println("- " + DESISTIR + ": Encerra o jogo.");
         System.out.println("===============================================================");
