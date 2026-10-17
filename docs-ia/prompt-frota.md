@@ -116,11 +116,15 @@ Em cada ronda: o Gemini enviava uma rajada em JSON; a rajada era traduzida para 
 {"validShots":3,"sunkBoats":[{"count":1,"type":"Nau"}],"repeatedShots":0,"outsideShots":0,"hitsOnBoats":[{"hits":1,"type":"Galeao"}],"missedShots":1}
 ```
 
+![Rajada 4 e resposta do jogo](Imagens/protocolo-rajada4.png)
+
 ## 6. Conclusão do Gemini
 Ao fim de 4 rajadas, o Gemini resumiu corretamente o protocolo:
 - `hitsOnBoats` conta os acertos que não afundam o navio;
 - `sunkBoats` recebe o navio quando o último segmento é atingido (esse tiro não conta em `hitsOnBoats`);
 - `validShots` agrega os tiros válidos, sem repetidos (`repeatedShots`) nem fora da grelha (`outsideShots`).
+
+  ![O Gemini confirma que domina o protocolo](Imagens/protocolo-conclusao-gemini.png)
 
 ## 7. Observações
 - O JSON da resposta é agregado: não diz qual dos 3 tiros acertou, por isso o LLM tem de o deduzir. Na rajada 2 assumiu que o acerto da rajada 1 tinha sido no B2, o que era falso (era água), e só mudou de hipótese depois de ver a resposta.
