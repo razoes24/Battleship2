@@ -35,6 +35,7 @@ public class Tasks {
     private static final String SIMULA = "simula";
     private static final String EXPORTAPDF = "exportapdf";
     private static final String SCOREBOARD = "scoreboard";
+    private static final String HISTORICOBD = "historicobd";
 
     /**
      * This task also tests the fighting element of a round of three shots
@@ -61,12 +62,14 @@ public class Tasks {
                 case GERAFROTA:
                     myFleet = Fleet.createRandom();
                     game = new Game(myFleet);
+                    JogadasRepository.novoJogo();
                     timer.startGame();
                     game.printMyBoard(false, true);
                     break;
                 case LEFROTA:
                     myFleet = buildFleet(in);
                     game = new Game(myFleet);
+                    JogadasRepository.novoJogo();
                     timer.startGame();
                     game.printMyBoard(false, true);
                     break;
@@ -105,6 +108,7 @@ public class Tasks {
                             // Guarda o JSON da jogada retornado pela randomEnemyFire
                             String jsonJogada = game.randomEnemyFire();
                             historico.add(jsonJogada);
+                            JogadasRepository.guardar(historico.size(), null, jsonJogada);
 
                             myFleet.printStatus();
                             game.printMyBoard(true, false);
@@ -131,6 +135,9 @@ public class Tasks {
                     break;
                 case SCOREBOARD:
                     Scoreboard.show();
+                    break;
+                case HISTORICOBD:
+                    JogadasRepository.listar().forEach(System.out::println);
                     break;
                 case AJUDA:
                     menuHelp();
@@ -176,6 +183,7 @@ public class Tasks {
         System.out.println("- " + SIMULA + ": Simula um jogo completo.");
         System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
         System.out.println("- " + SCOREBOARD + ": Mostra o scoreboard dos jogos anteriores.");
+        System.out.println("- " + HISTORICOBD + ": Lista as jogadas guardadas na base de dados.");
         System.out.println("- " + EXPORTAPDF + ": Exporta o histórico de jogadas para um ficheiro PDF.");
         System.out.println("- " + DESISTIR + ": Encerra o jogo.");
         System.out.println("===============================================================");

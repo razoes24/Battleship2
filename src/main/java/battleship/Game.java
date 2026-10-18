@@ -350,7 +350,13 @@ public class Game implements IGame
 
 //		System.out.println(move);
 
-		move.processEnemyFire(true);
+		String resultado = move.processEnemyFire(true);
+
+		// Guarda a rajada na base de dados: coordenadas dos tiros + resultado (JSON)
+		StringBuilder coordenadas = new StringBuilder();
+		for (IPosition shot : shots)
+			coordenadas.append(shot).append(" ");
+		JogadasRepository.guardar(moveNumber, coordenadas.toString().trim(), resultado);
 
 		alienMoves.add(move);
 
