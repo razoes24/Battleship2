@@ -48,6 +48,9 @@ public class Tasks {
         // Lista para guardar o histórico das jogadas
         List<String> historico = new ArrayList<>();
 
+        // Relógio que mede o tempo gasto em cada jogada
+        GameTimer timer = new GameTimer();
+
         menuHelp();
 
         System.out.print("> ");
@@ -60,12 +63,14 @@ public class Tasks {
                     myFleet = Fleet.createRandom();
                     game = new Game(myFleet);
                     JogadasRepository.novoJogo();
+                    timer.startGame();
                     game.printMyBoard(false, true);
                     break;
                 case LEFROTA:
                     myFleet = buildFleet(in);
                     game = new Game(myFleet);
                     JogadasRepository.novoJogo();
+                    timer.startGame();
                     game.printMyBoard(false, true);
                     break;
                 case STATUS:
@@ -81,6 +86,7 @@ public class Tasks {
                         // Guarda o JSON da jogada retornado pela readEnemyFire
                         String jsonJogada = game.readEnemyFire(in);
                         historico.add(jsonJogada);
+                        timer.endMove();
 
                         myFleet.printStatus();
                         game.printMyBoard(true, false);
@@ -90,6 +96,7 @@ public class Tasks {
                             Scoreboard.add(game.getAlienMoves().size());
                             // O programa termina a seguir, por isso exporta o PDF automaticamente
                             exportPdf(historico);
+                            timer.printTotal();
                             game.over();
                             System.exit(0);
                         }
@@ -144,6 +151,7 @@ public class Tasks {
             System.out.print("> ");
             command = in.next();
         }
+        timer.printTotal();
         System.out.println(GOODBYE_MESSAGE);
     }
 
