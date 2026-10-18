@@ -190,7 +190,7 @@ Site de documentação técnica (Javadoc): https://razoes24.github.io/Battleship
 
 ## Prompt final da estratégia do oponente de IA
 
-LLM usado: Gemini Pro. O prompt foi treinado por *few-shot prompting* em duas partidas contra o jogo, e a evolução (falhas encontradas e correções) está em [docs-ia](docs-ia/).
+LLM usado: Gemini Pro. O prompt foi treinado por *few-shot prompting* em várias partidas contra o jogo, e a evolução (falhas encontradas e correções) está em [docs-ia](docs-ia/).
 
 Ordem de uso numa conversa nova: (1) prompt da frota, (2) prompt do protocolo JSON, (3) o prompt abaixo.
 
