@@ -1,5 +1,9 @@
 # ⚓ Battleship 2.0
 
+🎥 **Vídeo 1 (Parte B): demonstração das funcionalidades:** https://youtu.be/bRIOaPX4xFg
+🎥 **Vídeo 2 (Parte C/D): interação do programa com o LLM:** https://youtu.be/ReB_CnfHNgY
+
+
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Java Version](https://img.shields.io/badge/Java-17%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
