@@ -30,3 +30,103 @@ O LLM passou em todos os critérios da checklist à 1.ª tentativa em todos os t
 - [x] O Galeão tem forma de T e respeita a orientação pedida.
 - [x] Nenhum navio toca noutro (ortogonal ou diagonal).
 - [x] Respeita os limites A-J e 1-10.
+
+
+## 4. Prompt do Protocolo (Few-Shot)
+Na mesma conversa do Gemini Pro, foi enviado o prompt do protocolo de comunicação, que define o formato JSON da rajada e da resposta, com 3 exemplos (*few-shot prompting*):
+
+> A nossa interação será através de objetos JSON, quer para a rajada de 3 tiros, quer para
+a correspondente resposta. Uma rajada tem o seguinte formato:
+{
+[ {"row": "A", "column": 5},
+{"row": "C", "column": 10},
+{"row": "F", "column" : 5} ]
+}
+A resposta a uma rajada é feita em conjunto e não tiro a tiro, como nos seguintes 3
+exemplos:
+• Uma barca ao fundo, um tiro numa nau e um tiro na água
+{
+"validShots": 3,
+"sunkBoats": [ {"count": 1, "type": "Barca"} ],
+"repeatedShots": 0,
+"outsideShots": 0,
+"hitsOnBoats": [ {"hits": 1, "type": "Nau"} ],
+"missedShots": 1
+}
+• Um tiro fora do tabuleiro, um tiro repetido e um tiro na água (o único válido)
+{
+"validShots": 1,
+"sunkBoats": [ ],
+"repeatedShots": 1,
+"outsideShots": 1,
+"hitsOnBoats": [ ],
+"missedShots": 1
+}
+• Um tiro numa nau, um tiro no galeão e uma caravela ao fundo
+{
+"validShots": 3,
+"sunkBoats": [{"count": 1, "type": "Caravela"}],
+"repeatedShots": 0,
+"outsideShots": 0,
+"hitsOnBoats": [{"hits": 1, "type": "Nau"}, {"hits": 1, "type": "Galeao"}],
+"missedShots": 0
+}
+O campo “repeatedShots” indica o número de tiros em posições já atingidas em jogadas
+anteriores, ou na própria jogada (em ambos os casos, uma péssima estratégia porque
+desperdiça tiros, só admissível por distração do jogador). O campo “outsideShots” indica
+o número de tiros em posições exteriores ao tabuleiro (ex.: B12, K4 ou L14), um erro
+também só admissível por distração do jogador. O campo “missedShots” corresponde ao
+número de tiros na água.
+Sugiro que me mande agora várias rajadas de tiros (uma de cada vez) e eu devolvo-lhe
+o JSON da resposta. Pare só quando tiver aprendido o protocolo de comunicação do
+jogo.
+
+## 5. Troca de Rajadas com o Jogo
+Em cada ronda: o Gemini enviava uma rajada em JSON; a rajada era traduzida para o comando do jogo (por exemplo `rajada B2 E5 H8`); e o primeiro bloco JSON impresso pelo jogo (a resposta, sem o tabuleiro) era colado no Gemini.
+
+### Rajada 1
+- Gemini: `[{"row":"B","column":2},{"row":"E","column":5},{"row":"H","column":8}]`
+- Comando: `rajada B2 E5 H8`
+- Resposta do jogo:
+```json
+{"validShots":3,"sunkBoats":[],"repeatedShots":0,"outsideShots":0,"hitsOnBoats":[{"hits":1,"type":"Nau"}],"missedShots":2}
+```
+
+### Rajada 2
+- Gemini: `[{"row":"B","column":1},{"row":"B","column":3},{"row":"A","column":2}]`
+- Comando: `rajada B1 B3 A2`
+- Resposta do jogo:
+```json
+{"validShots":3,"sunkBoats":[{"count":1,"type":"Barca"}],"repeatedShots":0,"outsideShots":0,"hitsOnBoats":[],"missedShots":2}
+```
+
+### Rajada 3
+- Gemini: `[{"row":"E","column":4},{"row":"E","column":6},{"row":"D","column":5}]`
+- Comando: `rajada E4 E6 D5`
+- Resposta do jogo:
+```json
+{"validShots":3,"sunkBoats":[],"repeatedShots":0,"outsideShots":0,"hitsOnBoats":[{"hits":1,"type":"Nau"}],"missedShots":2}
+```
+
+### Rajada 4
+- Gemini: `[{"row":"E","column":3},{"row":"E","column":7},{"row":"C","column":5}]`
+- Comando: `rajada E3 E7 C5`
+- Resposta do jogo:
+```json
+{"validShots":3,"sunkBoats":[{"count":1,"type":"Nau"}],"repeatedShots":0,"outsideShots":0,"hitsOnBoats":[{"hits":1,"type":"Galeao"}],"missedShots":1}
+```
+
+![Rajada 4 e resposta do jogo](Imagens/protocolo-rajada4.png)
+
+## 6. Conclusão do Gemini
+Ao fim de 4 rajadas, o Gemini resumiu corretamente o protocolo:
+- `hitsOnBoats` conta os acertos que não afundam o navio;
+- `sunkBoats` recebe o navio quando o último segmento é atingido (esse tiro não conta em `hitsOnBoats`);
+- `validShots` agrega os tiros válidos, sem repetidos (`repeatedShots`) nem fora da grelha (`outsideShots`).
+
+  ![O Gemini confirma que domina o protocolo](Imagens/protocolo-conclusao-gemini.png)
+
+## 7. Observações
+- O JSON da resposta é agregado: não diz qual dos 3 tiros acertou, por isso o LLM tem de o deduzir. Na rajada 2 assumiu que o acerto da rajada 1 tinha sido no B2, o que era falso (era água), e só mudou de hipótese depois de ver a resposta.
+- A partir da rajada 3, o Gemini passou a explorar a linha E e afundou a Nau com o tiro em E7.
+- Não houve tiros repetidos nem fora do tabuleiro, por isso esses dois campos ficaram sempre a 0.
