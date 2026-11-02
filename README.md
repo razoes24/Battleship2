@@ -285,3 +285,17 @@ Responde apenas com o JSON da rajada, sem qualquer texto antes ou depois:
 - **v1:** blocos de Diário de Bordo, regras de tiro e fase de caça. Falha observada: não usava a regra do não-contacto para resolver candidatos.
 - **v2:** acrescentou a leitura do JSON agregado e a eliminação de candidatos. Falha observada: deu como "confirmada" uma posição errada por não emparelhar candidatos adjacentes.
 - **v3:** acrescentou o emparelhamento de candidatos adjacentes.
+
+
+
+## Ficha 3 – Inspeção com Qodana (Tarefa 1B, ponto 5)
+
+Análise ao ramo `master` com o perfil `qodana.starter`.
+
+1. **Sinal/ruído:** a inspeção do IntelliJ (perfil *Project Default*) deu 3 866 itens, quase todos ruído (ortografia, Javadoc, sintaxe, ficheiros web). O Qodana reduziu isto a **23 problemas de severidade High em 4 ficheiros**: `pom.xml` (14), `Ship.java` (5), `Game.java` (3) e `Tasks.java` (1).
+2. **Segurança (14, ~61%):** dependências com CVEs no `pom.xml`, várias com CVSS 9.8. Quase todas são transitivas do Spring Boot 3.2.4 (Spring 6.1.5, Tomcat 10.1.19, Logback 1.4.14, Log4j 2.25.4, ClassGraph 4.6.18), mais o Jackson 2.18.11. Atualizar o Spring Boot e o Jackson resolveria a maioria.
+3. **Prováveis bugs:** no `Ship.java`, `if` sem chavetas com indentação enganadora (risco de bug real) e possíveis `null` não verificados. No `Game.java`, inicialização redundante de `jsonString`.
+4. **Desempenho:** `set.removeAll(list)` no `Game.java` (2×) pode ter complexidade O(n×m). Corrige-se com `set.removeAll(new HashSet<>(list))`.
+5. **Concorrência:** *busy wait* no `Tasks.java` (`Thread.sleep()` num ciclo), que gasta CPU sem necessidade.
+6. **Falsos positivos:** o IDE assinalou `equals()` sobre o próprio objeto no `PositionTest` (intencional, testa a reflexividade) e declarações "não usadas" que o Jackson usa por reflexão. O Qodana não analisou os testes.
+7. **Configuração:** o `qodana.yaml` usa `projectJDK: 23` (o projeto usa JDK 21) e o linter Ultimate `qodana-jvm:2025.1`, desatualizado e a exigir `QODANA_TOKEN`. Não há baseline, a cobertura não está configurada e as *Suggested inspections* só acrescentariam 1 import não usado.
