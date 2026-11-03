@@ -1,0 +1,22 @@
+# 129881 - Rafael Passinhas
+name: "Long Method - 129881"
+baseProfile: empty
+inspections:
+  # Overly long method -> tamanho (nº de instruções); livro: LOC > HIGH(Class)/2 = 65
+  - inspection: NonCommentSourceStatements
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 40
+  # Overly complex method -> CYCLO; livro: CYCLO >= HIGH (subido por ser avaliado isoladamente)
+  - inspection: CyclomaticComplexity
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 8
+  # Overly nested method -> MAXNESTING; livro: MAXNESTING >= SEVERAL
+  - inspection: NestingDepth
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 4
