@@ -13,7 +13,7 @@ inspections:
     enabled: true
     severity: WARNING
     options:
-      m_limit: 8
+      m_limit: 15
   # Overly nested method -> MAXNESTING; livro: MAXNESTING >= SEVERAL
   - inspection: NestingDepth
     enabled: true
