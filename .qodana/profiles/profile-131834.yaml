@@ -1,0 +1,15 @@
+# 131834 - Pedro Silva
+# Cheiro escolhido: Long Parameter List (Fowler)
+name: "Long Parameter List 131834"
+baseProfile: empty
+inspections:
+  - inspection: MethodWithTooManyParameters
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 4
+  - inspection: ConstructorWithTooManyParameters
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 4

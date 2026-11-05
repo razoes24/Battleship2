@@ -1,0 +1,10 @@
+# 131834 - Pedro Silva
+version: "1.0"
+linter: jetbrains/qodana-jvm-community:2026.2
+# Troque pela versao do JDK do projeto (ver java.version no pom.xml)
+projectJDK: "21"
+profile:
+  path: .qodana/profiles/profile-131834.yaml
+failureConditions:
+  severityThresholds:
+    any: 0
