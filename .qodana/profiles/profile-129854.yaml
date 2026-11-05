@@ -1,0 +1,11 @@
+# 129854 - Guilherme
+name: "Shotgun Surgery - 129854"
+baseProfile: empty
+inspections:
+  # Shotgun Surgery (Fowler) -> livro (Lanza & Marinescu): CM > Short Memory Cap AND CC > MANY
+  # Aproximacao possivel no Qodana: CC (Changing Classes) = nº de classes que dependem diretamente da classe
+  - inspection: ClassWithTooManyDependents
+    enabled: true
+    severity: WARNING
+    options:
+      limit: 10
