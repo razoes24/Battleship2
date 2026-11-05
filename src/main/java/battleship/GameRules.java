@@ -3,7 +3,7 @@
 package battleship;
 
 public final class GameRules {
-    public static final int maxShips = 11;
+    public static final int MAX_SHIPS = 11;
 
     private GameRules() {
     }
