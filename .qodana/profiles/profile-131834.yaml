@@ -18,3 +18,13 @@ inspections:
     severity: WARNING
     options:
       m_limit: 1
+  - inspection: ParametersPerMethod
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 4
+  - inspection: ParametersPerConstructor
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 4
