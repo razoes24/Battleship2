@@ -14,8 +14,8 @@ public class GameTimer {
     private final StopWatch stopWatch = new StopWatch();
     private final List<Long> moveTimes = new ArrayList<>();
 
-    // Ficha 3 – 2B: atributo com nome fora da convenção (violação provocada de propósito, 129881)
-    private long Tempo_Total = 0;
+    // Ficha 3 – 2B: atributo com nome fora da convenção (violação provocada de propósito, 129881), depois violação corrigida
+    private long tempoTotal = 0;
 
     /**
      * Começa a contar um novo jogo: apaga os tempos anteriores e arranca o relógio.
