@@ -1,7 +1,7 @@
 // 129854 - Guilherme - LEI-129854
 // Ficha 3 (2A, passo 9): cheiro Shotgun Surgery provocado e depois corrigido.
 // Correcao: ShotHistory deixa de depender de IPosition (guarda as coordenadas como texto),
-// pelo que IPosition volta a ter 25 classes dependentes (<= limite 25).
+// pelo que IPosition volta a ter 25 classes dependentes (<= limite 25) e o gate passa.
 package battleship;
 
 import java.util.ArrayList;
