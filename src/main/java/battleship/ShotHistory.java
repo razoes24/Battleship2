@@ -1,17 +1,17 @@
 // 129854 - Guilherme - LEI-129854
-// Ficha 3 (2A, passo 9): cheiro provocado de proposito (Shotgun Surgery).
-// Esta classe passa a depender de IPosition, que fica com 26 classes dependentes (> limite 25):
-// qualquer alteracao a IPosition obriga a mexer em ainda mais classes.
+// Ficha 3 (2A, passo 9): cheiro Shotgun Surgery provocado e depois corrigido.
+// Correcao: ShotHistory deixa de depender de IPosition (guarda as coordenadas como texto),
+// pelo que IPosition volta a ter 25 classes dependentes (<= limite 25).
 package battleship;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShotHistory {
-    private final List<IPosition> shots = new ArrayList<>();
+    private final List<String> shots = new ArrayList<>();
 
-    public void register(IPosition position) {
-        shots.add(position);
+    public void register(String coordinate) {
+        shots.add(coordinate);
     }
 
     public int count() {
