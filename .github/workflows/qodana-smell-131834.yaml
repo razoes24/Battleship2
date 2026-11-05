@@ -28,3 +28,4 @@ jobs:
         with:
           use-annotations: true
           post-pr-comment: true
+          pr-mode: false
