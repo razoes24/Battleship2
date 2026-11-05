@@ -8,4 +8,4 @@ inspections:
     enabled: true
     severity: WARNING
     options:
-      limit: 10
+      limit: 25  # calibrado: com 10 eram sinalizadas IPosition 25, Position 21, Compass 18 e Ship 14
