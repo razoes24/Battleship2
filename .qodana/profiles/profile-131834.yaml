@@ -3,12 +3,12 @@
 name: "Long Parameter List 131834"
 baseProfile: empty
 inspections:
-  - inspection: MethodWithTooManyParameters
+  - inspection: ParametersPerMethod
     enabled: true
     severity: WARNING
     options:
       m_limit: 4
-  - inspection: ConstructorWithTooManyParameters
+  - inspection: ParametersPerConstructor
     enabled: true
     severity: WARNING
     options:
