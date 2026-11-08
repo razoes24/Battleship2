@@ -62,4 +62,15 @@ public class GameTimer {
     private static String format(long millis) {
         return String.format("%.1f s", millis / 1000.0);
     }
+
+    // Ficha 3 – Long Method corrigido: as 45 instruções repetidas foram substituídas por um ciclo (129881)
+    public String relatorioLongo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Relatório de tempos\n");
+        sb.append("-------------------\n");
+        for (int i = 1; i <= 45; i++) {
+            sb.append("Linha ").append(i).append("\n");
+        }
+        return sb.toString();
+    }
 }
