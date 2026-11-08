@@ -1,0 +1,18 @@
+# 129856 - Bruno Frasco
+name: Checkstyle gate 129856
+on:
+  pull_request:
+  push:
+    branches: [master]
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Checkstyle
+        uses: reviewdog/action-checkstyle@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_config: Checkstyle/checkstyle-129856.xml
+          reporter: github-pr-review
+          level: error
