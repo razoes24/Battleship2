@@ -2,7 +2,7 @@
 name: "Large Class - 129856"
 baseProfile: empty
 inspections:
-  - inspection: ClassWithTooManyMethods
+  - inspection: MethodCount
     enabled: true
     severity: WARNING
     options:
