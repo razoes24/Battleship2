@@ -18,7 +18,7 @@ jobs:
       - uses: dbelyaev/action-checkstyle@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          checkstyle_config: Checkstyle/checkstyle-129856.xml
+          checkstyle_config: checkstyle-129856.xml
           reporter: github-pr-review
           filter_mode: nofilter
           level: error
