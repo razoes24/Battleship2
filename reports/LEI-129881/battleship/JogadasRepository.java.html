@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JogadasRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Testes 129881 Coverage Results</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">JogadasRepository.java</span></div><h1>JogadasRepository.java</h1><pre class="source lang-java linenums">package battleship;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Guarda e consulta as jogadas (rajadas) numa base de dados H2 local.
+ */
+<span class="fc" id="L17">public class JogadasRepository {</span>
+
+    private static final String URL = &quot;jdbc:h2:./data/jogadas&quot;;
+
+<span class="fc" id="L21">    private static String jogoAtual = gerarIdJogo();</span>
+
+    static {
+<span class="fc" id="L24">        criarTabela();</span>
+<span class="fc" id="L25">    }</span>
+
+    private static String gerarIdJogo() {
+<span class="fc" id="L28">        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(&quot;yyyyMMdd-HHmmss&quot;));</span>
+    }
+
+    /** Chamar quando começa um jogo novo. */
+    public static void novoJogo() {
+<span class="fc" id="L33">        jogoAtual = gerarIdJogo();</span>
+<span class="fc" id="L34">    }</span>
+
+    private static void criarTabela() {
+<span class="fc" id="L37">        String sql = &quot;&quot;&quot;</span>
+                CREATE TABLE IF NOT EXISTS jogadas (
+                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                    jogo_id VARCHAR(30) NOT NULL,
+                    numero_rajada INT NOT NULL,
+                    coordenadas VARCHAR(200),
+                    resultado VARCHAR(10000) NOT NULL,
+                    data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                &quot;&quot;&quot;;
+<span class="fc" id="L47">        try (Connection c = DriverManager.getConnection(URL);</span>
+<span class="fc" id="L48">             Statement st = c.createStatement()) {</span>
+<span class="fc" id="L49">            st.execute(sql);</span>
+<span class="nc" id="L50">        } catch (SQLException e) {</span>
+<span class="nc" id="L51">            System.out.println(&quot;Erro ao preparar a base de dados: &quot; + e.getMessage());</span>
+<span class="fc" id="L52">        }</span>
+<span class="fc" id="L53">    }</span>
+
+    /** Grava uma rajada. As coordenadas podem ser null. */
+    public static void guardar(int numeroRajada, String coordenadas, String resultado) {
+<span class="fc" id="L57">        String sql = &quot;INSERT INTO jogadas (jogo_id, numero_rajada, coordenadas, resultado) VALUES (?, ?, ?, ?)&quot;;</span>
+<span class="fc" id="L58">        try (Connection c = DriverManager.getConnection(URL);</span>
+<span class="fc" id="L59">             PreparedStatement ps = c.prepareStatement(sql)) {</span>
+<span class="fc" id="L60">            ps.setString(1, jogoAtual);</span>
+<span class="fc" id="L61">            ps.setInt(2, numeroRajada);</span>
+<span class="fc" id="L62">            ps.setString(3, coordenadas);</span>
+<span class="fc" id="L63">            ps.setString(4, resultado);</span>
+<span class="fc" id="L64">            ps.executeUpdate();</span>
+<span class="fc" id="L65">        } catch (SQLException e) {</span>
+<span class="fc" id="L66">            System.out.println(&quot;Erro ao guardar a jogada: &quot; + e.getMessage());</span>
+<span class="fc" id="L67">        }</span>
+<span class="fc" id="L68">    }</span>
+
+    /** Devolve todas as jogadas guardadas, em texto. */
+    public static List&lt;String&gt; listar() {
+<span class="fc" id="L72">        List&lt;String&gt; linhas = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L73">        String sql = &quot;SELECT jogo_id, numero_rajada, coordenadas, resultado FROM jogadas ORDER BY id&quot;;</span>
+<span class="fc" id="L74">        try (Connection c = DriverManager.getConnection(URL);</span>
+<span class="fc" id="L75">             Statement st = c.createStatement();</span>
+<span class="fc" id="L76">             ResultSet rs = st.executeQuery(sql)) {</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L78">                String coords = rs.getString(&quot;coordenadas&quot;);</span>
+<span class="fc" id="L79">                linhas.add(&quot;Jogo &quot; + rs.getString(&quot;jogo_id&quot;)</span>
+<span class="fc" id="L80">                        + &quot; | Rajada &quot; + rs.getInt(&quot;numero_rajada&quot;)</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">                        + (coords != null ? &quot; | &quot; + coords : &quot;&quot;)</span>
+<span class="fc" id="L82">                        + &quot; | &quot; + rs.getString(&quot;resultado&quot;).replaceAll(&quot;\\s+&quot;, &quot; &quot;));</span>
+<span class="fc" id="L83">            }</span>
+<span class="nc" id="L84">        } catch (SQLException e) {</span>
+<span class="nc" id="L85">            System.out.println(&quot;Erro ao consultar as jogadas: &quot; + e.getMessage());</span>
+<span class="fc" id="L86">        }</span>
+<span class="fc" id="L87">        return linhas;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
