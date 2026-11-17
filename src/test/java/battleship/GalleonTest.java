@@ -19,6 +19,7 @@ import java.util.List;
  * - getLeftMostPos: 2
  * - getRightMostPos: 2
  */
+@DisplayName("Testes da classe Galleon")
 public class GalleonTest {
 
 	private Galleon galleon;
@@ -38,6 +39,7 @@ public class GalleonTest {
 	 * Cyclomatic Complexity: 5
 	 */
 	@Test
+	@DisplayName("Construtor a NORTE ocupa as 5 posições em forma de T")
 	void testConstructorNorth() {
 		List<IPosition> positions = galleon.getPositions();
 		assertNotNull(galleon, "Error: Galleon instance should not be null.");
@@ -53,6 +55,7 @@ public class GalleonTest {
 	 * Test for the constructor with SOUTH direction.
 	 */
 	@Test
+	@DisplayName("Construtor a SUL ocupa as 5 posições em forma de T invertido")
 	void testConstructorSouth() {
 		Galleon southGalleon = new Galleon(Compass.SOUTH, new Position(5, 5));
 		List<IPosition> positions = southGalleon.getPositions();
@@ -70,6 +73,7 @@ public class GalleonTest {
 	 * Cyclomatic Complexity: 2
 	 */
 	@Test
+	@DisplayName("stillFloating: galeão intacto continua a flutuar")
 	void testStillFloating1() {
 		assertTrue(galleon.stillFloating(), "Error: Galleon should initially be floating.");
 	}
@@ -78,6 +82,7 @@ public class GalleonTest {
 	 * Test for the stillFloating method (all positions hit).
 	 */
 	@Test
+	@DisplayName("stillFloating: galeão com todas as posições atingidas afunda")
 	void testStillFloating2() {
 		galleon.getPositions().forEach(pos -> pos.shoot());
 		assertFalse(galleon.stillFloating(), "Error: Galleon should not float when all positions are hit.");
@@ -88,6 +93,7 @@ public class GalleonTest {
 	 * Cyclomatic Complexity: 2
 	 */
 	@Test
+	@DisplayName("getTopMostPos devolve a linha 5")
 	void testGetTopMostPos() {
 		assertEquals(5, galleon.getTopMostPos(), "Error: The topmost position should be 5.");
 	}
@@ -97,6 +103,7 @@ public class GalleonTest {
 	 * Cyclomatic Complexity: 2
 	 */
 	@Test
+	@DisplayName("getBottomMostPos devolve a linha 7")
 	void testGetBottomMostPos() {
 		assertEquals(7, galleon.getBottomMostPos(), "Error: The bottommost position should be 7.");
 	}
@@ -106,6 +113,7 @@ public class GalleonTest {
 	 * Cyclomatic Complexity: 2
 	 */
 	@Test
+	@DisplayName("getLeftMostPos devolve a coluna 5")
 	void testGetLeftMostPos() {
 		assertEquals(5, galleon.getLeftMostPos(), "Error: The leftmost position should be 5.");
 	}
@@ -115,6 +123,7 @@ public class GalleonTest {
 	 * Cyclomatic Complexity: 2
 	 */
 	@Test
+	@DisplayName("getRightMostPos devolve a coluna 7")
 	void testGetRightMostPos() {
 		assertEquals(7, galleon.getRightMostPos(), "Error: The rightmost position should be 7.");
 	}
@@ -123,6 +132,7 @@ public class GalleonTest {
 	 * Test for the constructor with invalid input.
 	 */
 	@Test
+	@DisplayName("Construtor lança NullPointerException com argumentos null")
 	void testConstructorWithInvalidInput() {
 		assertThrows(NullPointerException.class, () -> new Galleon(null, null),
 				"Error: NullPointerException should have been thrown for null input.");
@@ -134,6 +144,7 @@ public class GalleonTest {
 	 * Test for the constructor with EAST direction.
 	 */
 	@Test
+	@DisplayName("Construtor a ESTE ocupa as 5 posições corretas")
 	void testConstructorEast() {
 		Galleon eastGalleon = new Galleon(Compass.EAST, new Position(5, 5));
 		List<IPosition> positions = eastGalleon.getPositions();
@@ -150,6 +161,7 @@ public class GalleonTest {
 	 * Test for the constructor with WEST direction.
 	 */
 	@Test
+	@DisplayName("Construtor a OESTE ocupa as 5 posições corretas")
 	void testConstructorWest() {
 		Galleon westGalleon = new Galleon(Compass.WEST, new Position(5, 5));
 		List<IPosition> positions = westGalleon.getPositions();
