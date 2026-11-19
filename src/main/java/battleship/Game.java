@@ -17,12 +17,12 @@ public class Game implements IGame
 	 *                    and their positions are shown according to their placement.
 	 * @param moves       the list of moves containing shots. If shot positions are shown,
 	 *                    they will be rendered based on their outcome (hit, miss, etc.).
-	 * @param show_shots  if true, displays the shots taken during the game and marks
+	 * @param showShots  if true, displays the shots taken during the game and marks
 	 *                    their result (hit or miss) on the board.
 	 * @param showLegend  if true, displays an explanatory legend of the symbols used
 	 *                    to represent various elements such as ships, misses, hits, etc.
 	 */
-	public static void printBoard(IFleet fleet, List<IMove> moves, boolean show_shots, boolean showLegend) {
+	public static void printBoard(IFleet fleet, List<IMove> moves, boolean showShots, boolean showLegend) {
 
 		assert fleet != null;
 		assert moves != null;
@@ -35,7 +35,7 @@ public class Game implements IGame
 
 		printShips(fleet, map);
 
-		if (show_shots)
+		if (showShots)
 			printBoardShots(moves, map);
 
 		printBoardFrame(map);
@@ -50,11 +50,11 @@ public class Game implements IGame
 
 	private static void printShips(IFleet fleet, char[][] map) {
 		for (IShip ship : fleet.getShips()) {
-			for (IPosition ship_pos : ship.getPositions())
-				map[ship_pos.getRow()][ship_pos.getColumn()] = SHIP_MARKER;
+			for (IPosition shipPosition : ship.getPositions())
+				map[shipPosition.getRow()][shipPosition.getColumn()] = SHIP_MARKER;
 			if (!ship.stillFloating())
-				for (IPosition adjacent_pos : ship.getAdjacentPositions())
-					map[adjacent_pos.getRow()][adjacent_pos.getColumn()] = SHIP_ADJACENT_MARKER;
+				for (IPosition adjacentPosition : ship.getAdjacentPositions())
+					map[adjacentPosition.getRow()][adjacentPosition.getColumn()] = SHIP_ADJACENT_MARKER;
 		}
 	}
 
@@ -163,10 +163,10 @@ public class Game implements IGame
 	private final IFleet alienFleet;
 	private final List<IMove> myMoves;
 
-	private Integer countInvalidShots;
-	private Integer countRepeatedShots;
-	private Integer countHits;
-	private Integer countSinks;
+	private int countInvalidShots;
+	private int countRepeatedShots;
+	private int countHits;
+	private int countSinks;
 	private int moveNumber;
 
 	//------------------------------------------------------------------
@@ -224,15 +224,7 @@ public class Game implements IGame
 		// Criar uma instância de Random com uma seed baseada no timestamp atual
 		Random random = new Random(System.currentTimeMillis());
 
-		Set<IPosition> usablePositions = new HashSet<IPosition>();
-		for (int r = 0; r < BOARD_SIZE; r++)
-			for (int c = 0; c < BOARD_SIZE; c++)
-				usablePositions.add(new Position(r, c));
-
-		this.myFleet.getSunkShips().forEach(ship -> usablePositions.removeAll(ship.getAdjacentPositions()));
-		this.alienMoves.forEach(move ->  usablePositions.removeAll(move.getShots()));
-
-		List<IPosition> candidateShots = new ArrayList<>(usablePositions);
+		List<IPosition> candidateShots = findCandidateShots();
 
 		// Criar lista para armazenar os tiros
 		List<IPosition> shots = new ArrayList<IPosition>();
@@ -265,6 +257,18 @@ public class Game implements IGame
 		this.fireShots(shots);
 
 		return Game.jsonShots(shots);
+	}
+
+	private List<IPosition> findCandidateShots() {
+		Set<IPosition> usablePositions = new HashSet<IPosition>();
+		for (int r = 0; r < BOARD_SIZE; r++)
+			for (int c = 0; c < BOARD_SIZE; c++)
+				usablePositions.add(new Position(r, c));
+
+		this.myFleet.getSunkShips().forEach(ship -> usablePositions.removeAll(ship.getAdjacentPositions()));
+		this.alienMoves.forEach(move ->  usablePositions.removeAll(move.getShots()));
+
+		return new ArrayList<>(usablePositions);
 	}
 
 
@@ -353,14 +357,18 @@ public class Game implements IGame
 		String resultado = move.processEnemyFire(true);
 
 		// Guarda a rajada na base de dados: coordenadas dos tiros + resultado (JSON)
-		StringBuilder coordenadas = new StringBuilder();
-		for (IPosition shot : shots)
-			coordenadas.append(shot).append(" ");
-		JogadasRepository.guardar(moveNumber, coordenadas.toString().trim(), resultado);
+		JogadasRepository.guardar(moveNumber, formatCoordinates(shots), resultado);
 
 		alienMoves.add(move);
 
 		moveNumber++;
+	}
+
+	private String formatCoordinates(List<IPosition> shots) {
+		StringBuilder coordenadas = new StringBuilder();
+		for (IPosition shot : shots)
+			coordenadas.append(shot).append(" ");
+		return coordenadas.toString().trim();
 	}
 
 	/**
@@ -394,10 +402,11 @@ public class Game implements IGame
 		{
 			ship.shoot(pos);
 			countHits++;
-			if (!ship.stillFloating()) {
+			boolean sunk = !ship.stillFloating();
+			if (sunk) {
 				countSinks++;
 			}
-			return new ShotResult(true, false, ship, !ship.stillFloating());
+			return new ShotResult(true, false, ship, sunk);
 		}
 	}
 
@@ -428,8 +437,7 @@ public class Game implements IGame
 	@Override
 	public int getRemainingShips()
 	{
-		List<IShip> floatingShips = myFleet.getFloatingShips();
-		return floatingShips.size();
+		return myFleet.getFloatingShips().size();
 	}
 
 	public boolean repeatedShot(IPosition pos)
@@ -442,14 +450,14 @@ public class Game implements IGame
 		return false;
 	}
 
-	public void printMyBoard(boolean show_shots, boolean show_legend)
+	public void printMyBoard(boolean showShots, boolean showLegend)
 	{
-		Game.printBoard(this.myFleet, this.alienMoves, show_shots, show_legend);
+		Game.printBoard(this.myFleet, this.alienMoves, showShots, showLegend);
 	}
 
-	public void printAlienBoard(boolean show_shots, boolean show_legend)
+	public void printAlienBoard(boolean showShots, boolean showLegend)
 	{
-		Game.printBoard(this.alienFleet, this.myMoves, show_shots, show_legend);
+		Game.printBoard(this.alienFleet, this.myMoves, showShots, showLegend);
 	}
 
 	public void over() {
