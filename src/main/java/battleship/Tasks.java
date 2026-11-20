@@ -38,6 +38,11 @@ public class Tasks {
     private static final String HISTORICOBD = "historicobd";
 
     /**
+     * Name of the PDF file with the move history.
+     */
+    private static final String PDF_FILE = "jogadas.pdf";
+
+    /**
      * This task also tests the fighting element of a round of three shots
      */
     public static void menu() {
@@ -162,8 +167,8 @@ public class Tasks {
      */
     private static void exportPdf(List<String> historico) {
         try {
-            PdfExporter.export(historico, "jogadas.pdf");
-            System.out.println("PDF gerado com sucesso: jogadas.pdf");
+            PdfExporter.export(historico, PDF_FILE);
+            System.out.println("PDF gerado com sucesso: " + PDF_FILE);
         } catch (Exception e) {
             System.out.println("Erro ao gerar PDF: " + e.getMessage());
         }
