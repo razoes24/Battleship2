@@ -51,7 +51,7 @@ public class Tasks {
         IGame game = null;
 
         // Lista para guardar o histórico das jogadas
-        List<String> historico = new ArrayList<>();
+        List<String> moveHistory = new ArrayList<>();
 
         // Relógio que mede o tempo gasto em cada jogada
         GameTimer timer = new GameTimer();
@@ -90,7 +90,7 @@ public class Tasks {
                     if (game != null) {
                         // Guarda o JSON da jogada retornado pela readEnemyFire
                         String jsonJogada = game.readEnemyFire(in);
-                        historico.add(jsonJogada);
+                        moveHistory.add(jsonJogada);
                         timer.endMove();
 
                         myFleet.printStatus();
@@ -100,7 +100,7 @@ public class Tasks {
                             // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
                             Scoreboard.add(game.getAlienMoves().size());
                             // O programa termina a seguir, por isso exporta o PDF automaticamente
-                            exportPdf(historico);
+                            exportPdf(moveHistory);
                             timer.printTotal();
                             game.over();
                             System.exit(0);
@@ -112,8 +112,8 @@ public class Tasks {
                         while (game.getRemainingShips() > 0) {
                             // Guarda o JSON da jogada retornado pela randomEnemyFire
                             String jsonJogada = game.randomEnemyFire();
-                            historico.add(jsonJogada);
-                            JogadasRepository.guardar(historico.size(), null, jsonJogada);
+                            moveHistory.add(jsonJogada);
+                            JogadasRepository.guardar(moveHistory.size(), null, jsonJogada);
 
                             myFleet.printStatus();
                             game.printMyBoard(true, false);
@@ -128,7 +128,7 @@ public class Tasks {
                             // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
                             Scoreboard.add(game.getAlienMoves().size());
                             // O programa termina a seguir, por isso exporta o PDF automaticamente
-                            exportPdf(historico);
+                            exportPdf(moveHistory);
                             game.over();
                             System.exit(0);
                         }
@@ -148,7 +148,7 @@ public class Tasks {
                     menuHelp();
                     break;
                 case EXPORTAPDF:
-                    exportPdf(historico);
+                    exportPdf(moveHistory);
                     break;
                 default:
                     System.out.println("Que comando é esse??? Repete ...");
@@ -163,11 +163,11 @@ public class Tasks {
     /**
      * Exports the move history to a PDF file.
      *
-     * @param historico the list of moves (JSON strings)
+     * @param moveHistory the list of moves (JSON strings)
      */
-    private static void exportPdf(List<String> historico) {
+    private static void exportPdf(List<String> moveHistory) {
         try {
-            PdfExporter.export(historico, PDF_FILE);
+            PdfExporter.export(moveHistory, PDF_FILE);
             System.out.println("PDF gerado com sucesso: " + PDF_FILE);
         } catch (Exception e) {
             System.out.println("Erro ao gerar PDF: " + e.getMessage());
