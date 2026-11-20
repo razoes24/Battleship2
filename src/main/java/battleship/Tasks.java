@@ -270,7 +270,8 @@ public class Tasks {
         String input = (part2 != null) ? part1 + part2 : part1;
         input = input.toUpperCase();
 
-        if (input.matches("[A-Z]\\d+")) {
+        boolean joinedFormat = input.matches("[A-Z]\\d+");
+        if (joinedFormat) {
             char column = input.charAt(0);
             int row = Integer.parseInt(input.substring(1));
             return new Position(column, row);
