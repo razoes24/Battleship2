@@ -239,7 +239,7 @@ import java.util.List;
 		@Test
 		@DisplayName("Deve lançar AssertionError se a lista de ships for null")
 		void testPrintShipsNull() {
-			assertThrows(AssertionError.class, () -> fleet.printShips(null), "Error: Adicionar uma posicao null deve devolver AssertionError.");
+			assertThrows(AssertionError.class, () -> Fleet.printShips(null), "Error: Adicionar uma posicao null deve devolver AssertionError.");
 		}
 
 		@Test
@@ -248,7 +248,7 @@ import java.util.List;
 			IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
 			fleet.addShip(ship);
 
-			assertDoesNotThrow(() -> fleet.printShips(fleet.getShips()), "Erro: Imprimir uma lista válida de navios não deve lançar exceção.");
+			assertDoesNotThrow(() -> Fleet.printShips(fleet.getShips()), "Erro: Imprimir uma lista válida de navios não deve lançar exceção.");
 		}
 
 		@Test
