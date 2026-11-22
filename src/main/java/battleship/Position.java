@@ -11,6 +11,7 @@ import java.util.Objects;
  */
 public class Position implements IPosition {
 
+	private static final char FIRST_ROW_CHAR = 'A';
 	/**
 	 * The row coordinate of the position.
 	 */
@@ -46,7 +47,7 @@ public class Position implements IPosition {
 	 * @param classicColumn the column coordinate of the position
 	 */
 	public Position(char classicRow, int classicColumn) {
-		this.row = Character.toUpperCase(classicRow) - 'A';
+		this.row = Character.toUpperCase(classicRow) - FIRST_ROW_CHAR;
 		this.column = classicColumn-1;
 		this.isOccupied = false;
 		this.isHit = false;
@@ -92,7 +93,7 @@ public class Position implements IPosition {
 	 * @return the traditional row within [A-J]
 	 */
 	public char getClassicRow() {
-		return (char) ('A' + row);
+		return (char) (FIRST_ROW_CHAR + row);
 	}
 
 	/**
@@ -233,7 +234,7 @@ public class Position implements IPosition {
 	 */
 	@Override
 	public String toString() {
-		return (char) ('A' + row) + "" + (column + 1);
+		return (char) (FIRST_ROW_CHAR + row) + "" + (column + 1);
 //		return "Row = " + (char) ('A' + row) + ", Column = " + (column + 1);
 	}
 }
