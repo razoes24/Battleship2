@@ -10,8 +10,6 @@
 | Game (contadores) | Uso desnecessário de Integer (wrapper) | Type Migration | 131834 |
 | Game::fireSingleShot | Expressão duplicada (`!ship.stillFloating()`) | Introduce Variable | 131834 |
 | GameSession::shotsPerTurn | Speculative Generality (campo redundante) | Inline Field | 131834 |
-
-
 | Fleet::createRandom | Long Method / Lista de tipos acoplada ao método | Extract Method | 129856 |
 | Fleet::createRandomShip | Variável temporária desnecessária (`ship`) | Inline Variable | 129856 |
 | Fleet::addShip | Nome de parâmetro pouco descritivo (`s`) | Rename | 129856 |
