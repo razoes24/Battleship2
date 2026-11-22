@@ -13,9 +13,9 @@
 
 
 | Fleet::createRandom | Long Method / Lista de tipos acoplada ao método | Extract Method | 129856 |
-| Fleet::addShip | Variável temporária desnecessária (`result`) | Inline Variable | 129856 |
-| Fleet::colisionRisk | Erro ortográfico no nome do método privado | Rename | 129856 |
+| Fleet::createRandomShip | Variável temporária desnecessária (`ship`) | Inline Variable | 129856 |
+| Fleet::addShip | Nome de parâmetro pouco descritivo (`s`) | Rename | 129856 |
 | Fleet::printShips | Método de instância que não acede ao estado (`this`) | Make Static | 129856 |
-| Position::Position(char, int) | Magic Char / Magic Number (`'A'` e `1`) | Introduce Constant | 129856 |
+| Position::Position(char, int) | Magic Char (`'A'`) | Introduce Constant | 129856 |
 | Position::adjacentPositions | Matriz de direções criada a cada invocação | Introduce Field | 129856 |
-| Position::toString | Duplicação de lógica já existente nos getters (`getClassicRow` / `getClassicColumn`) | Inline Method / Replace with Getter | 129856 |
+| Position::isAdjacentTo | Expressão booleana longa | Introduce Variable | 129856 |
