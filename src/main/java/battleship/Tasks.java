@@ -38,6 +38,11 @@ public class Tasks {
     private static final String HISTORICOBD = "historicobd";
 
     /**
+     * Name of the PDF file with the move history.
+     */
+    private static final String PDF_FILE = "jogadas.pdf";
+
+    /**
      * This task also tests the fighting element of a round of three shots
      */
     public static void menu() {
@@ -46,7 +51,7 @@ public class Tasks {
         IGame game = null;
 
         // Lista para guardar o histórico das jogadas
-        List<String> historico = new ArrayList<>();
+        List<String> moveHistory = new ArrayList<>();
 
         // Relógio que mede o tempo gasto em cada jogada
         GameTimer timer = new GameTimer();
@@ -61,17 +66,11 @@ public class Tasks {
             switch (command) {
                 case GERAFROTA:
                     myFleet = Fleet.createRandom();
-                    game = new Game(myFleet);
-                    JogadasRepository.novoJogo();
-                    timer.startGame();
-                    game.printMyBoard(false, true);
+                    game = startNewGame(myFleet, timer);
                     break;
                 case LEFROTA:
                     myFleet = buildFleet(in);
-                    game = new Game(myFleet);
-                    JogadasRepository.novoJogo();
-                    timer.startGame();
-                    game.printMyBoard(false, true);
+                    game = startNewGame(myFleet, timer);
                     break;
                 case STATUS:
                     if (myFleet != null)
@@ -85,7 +84,7 @@ public class Tasks {
                     if (game != null) {
                         // Guarda o JSON da jogada retornado pela readEnemyFire
                         String jsonJogada = game.readEnemyFire(in);
-                        historico.add(jsonJogada);
+                        moveHistory.add(jsonJogada);
                         timer.endMove();
 
                         myFleet.printStatus();
@@ -95,7 +94,7 @@ public class Tasks {
                             // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
                             Scoreboard.add(game.getAlienMoves().size());
                             // O programa termina a seguir, por isso exporta o PDF automaticamente
-                            exportPdf(historico);
+                            exportPdf(moveHistory, PDF_FILE);
                             timer.printTotal();
                             game.over();
                             System.exit(0);
@@ -107,8 +106,8 @@ public class Tasks {
                         while (game.getRemainingShips() > 0) {
                             // Guarda o JSON da jogada retornado pela randomEnemyFire
                             String jsonJogada = game.randomEnemyFire();
-                            historico.add(jsonJogada);
-                            JogadasRepository.guardar(historico.size(), null, jsonJogada);
+                            moveHistory.add(jsonJogada);
+                            JogadasRepository.guardar(moveHistory.size(), null, jsonJogada);
 
                             myFleet.printStatus();
                             game.printMyBoard(true, false);
@@ -123,7 +122,7 @@ public class Tasks {
                             // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
                             Scoreboard.add(game.getAlienMoves().size());
                             // O programa termina a seguir, por isso exporta o PDF automaticamente
-                            exportPdf(historico);
+                            exportPdf(moveHistory, PDF_FILE);
                             game.over();
                             System.exit(0);
                         }
@@ -143,7 +142,7 @@ public class Tasks {
                     menuHelp();
                     break;
                 case EXPORTAPDF:
-                    exportPdf(historico);
+                    exportPdf(moveHistory, PDF_FILE);
                     break;
                 default:
                     System.out.println("Que comando é esse??? Repete ...");
@@ -156,14 +155,31 @@ public class Tasks {
     }
 
     /**
+     * Starts a new game with the given fleet: registers it in the database,
+     * starts the game timer and prints the board.
+     *
+     * @param fleet the fleet of the new game
+     * @param timer the game timer
+     * @return the new game
+     */
+    private static IGame startNewGame(IFleet fleet, GameTimer timer) {
+        IGame game = new Game(fleet);
+        JogadasRepository.novoJogo();
+        timer.startGame();
+        game.printMyBoard(false, true);
+        return game;
+    }
+
+    /**
      * Exports the move history to a PDF file.
      *
-     * @param historico the list of moves (JSON strings)
+     * @param moveHistory the list of moves (JSON strings)
+     * @param fileName    the name of the PDF file to create
      */
-    private static void exportPdf(List<String> historico) {
+    private static void exportPdf(List<String> moveHistory, String fileName) {
         try {
-            PdfExporter.export(historico, "jogadas.pdf");
-            System.out.println("PDF gerado com sucesso: jogadas.pdf");
+            PdfExporter.export(moveHistory, fileName);
+            System.out.println("PDF gerado com sucesso: " + fileName);
         } catch (Exception e) {
             System.out.println("Erro ao gerar PDF: " + e.getMessage());
         }
@@ -229,8 +245,7 @@ public class Tasks {
 
         String shipKind = in.next();
         Position pos = readPosition(in);
-        char c = in.next().charAt(0);
-        Compass bearing = Compass.charToCompass(c);
+        Compass bearing = Compass.charToCompass(in.next().charAt(0));
         return Ship.buildShip(shipKind, bearing, pos);
     }
 
@@ -270,7 +285,8 @@ public class Tasks {
         String input = (part2 != null) ? part1 + part2 : part1;
         input = input.toUpperCase();
 
-        if (input.matches("[A-Z]\\d+")) {
+        boolean joinedFormat = input.matches("[A-Z]\\d+");
+        if (joinedFormat) {
             char column = input.charAt(0);
             int row = Integer.parseInt(input.substring(1));
             return new Position(column, row);
