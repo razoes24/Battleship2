@@ -299,3 +299,17 @@ Análise ao ramo `master` com o perfil `qodana.starter`.
 5. **Concorrência:** *busy wait* no `Tasks.java` (`Thread.sleep()` num ciclo), que gasta CPU sem necessidade.
 6. **Falsos positivos:** o IDE assinalou `equals()` sobre o próprio objeto no `PositionTest` (intencional, testa a reflexividade) e declarações "não usadas" que o Jackson usa por reflexão. O Qodana não analisou os testes.
 7. **Configuração:** o `qodana.yaml` usa `projectJDK: 23` (o projeto usa JDK 21) e o linter Ultimate `qodana-jvm:2025.1`, desatualizado e a exigir `QODANA_TOKEN`. Não há baseline, a cobertura não está configurada e as *Suggested inspections* só acrescentariam 1 import não usado.
+
+## Ficha laboratorial nº 4 - Parte 1-B: Workflow de testes unitários (129854)
+
+O workflow `.github/workflows/maven.yml` ("Java CI with Maven") foi criado a partir do modelo do GitHub Actions
+*Java with Maven – Build and test a Java project with Apache Maven* e executa automaticamente a bateria de testes JUnit.
+
+- **Quando corre:** em qualquer `push` para qualquer ramo (`master` e ramos de trabalho como `UnitTests_XXXXXX`
+  ou `Refactoring_XXXXXX`) e em cada *pull request* para o `master`.
+- **O que faz:** faz checkout do código, instala o JDK 21 (Temurin, a versão definida no `pom.xml`) com cache do Maven
+  e corre `mvn -B test`. Se algum teste falhar, o workflow fica vermelho e o *pull request* mostra a falha.
+- **Correções feitas:** o modelo usava o JDK 17, mas o projeto compila para Java 21, o que fazia a compilação falhar.
+  O modelo também só reagia ao ramo `main`, que não existe neste repositório (o ramo principal é o `master`).
+  O envio do grafo de dependências só corre em pushes para o `master`.
+- **Onde ver os resultados:** separador **Actions** do repositório, ou no próprio *pull request*.

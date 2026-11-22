@@ -4,6 +4,10 @@ linter: qodana-jvm-community
 projectJDK: "21"
 profile:
   path: .qodana/profiles/profile-129854.yaml
+# A gate de Shotgun Surgery mede o codigo de producao. As classes de teste
+# (ficha 4) dependem de IPosition/Position e contavam como dependentes, por isso
+# sao retiradas da copia analisada no CI antes da analise (o repositorio nao muda).
+bootstrap: rm -rf src/test
 failureConditions:
   severityThresholds:
     any: 0
