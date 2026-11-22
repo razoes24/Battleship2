@@ -94,7 +94,7 @@ public class Tasks {
                             // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
                             Scoreboard.add(game.getAlienMoves().size());
                             // O programa termina a seguir, por isso exporta o PDF automaticamente
-                            exportPdf(moveHistory);
+                            exportPdf(moveHistory, PDF_FILE);
                             timer.printTotal();
                             game.over();
                             System.exit(0);
@@ -122,7 +122,7 @@ public class Tasks {
                             // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
                             Scoreboard.add(game.getAlienMoves().size());
                             // O programa termina a seguir, por isso exporta o PDF automaticamente
-                            exportPdf(moveHistory);
+                            exportPdf(moveHistory, PDF_FILE);
                             game.over();
                             System.exit(0);
                         }
@@ -142,7 +142,7 @@ public class Tasks {
                     menuHelp();
                     break;
                 case EXPORTAPDF:
-                    exportPdf(moveHistory);
+                    exportPdf(moveHistory, PDF_FILE);
                     break;
                 default:
                     System.out.println("Que comando é esse??? Repete ...");
@@ -174,11 +174,12 @@ public class Tasks {
      * Exports the move history to a PDF file.
      *
      * @param moveHistory the list of moves (JSON strings)
+     * @param fileName    the name of the PDF file to create
      */
-    private static void exportPdf(List<String> moveHistory) {
+    private static void exportPdf(List<String> moveHistory, String fileName) {
         try {
-            PdfExporter.export(moveHistory, PDF_FILE);
-            System.out.println("PDF gerado com sucesso: " + PDF_FILE);
+            PdfExporter.export(moveHistory, fileName);
+            System.out.println("PDF gerado com sucesso: " + fileName);
         } catch (Exception e) {
             System.out.println("Erro ao gerar PDF: " + e.getMessage());
         }
