@@ -11,6 +11,7 @@ import java.util.Objects;
  */
 public class Position implements IPosition {
 
+	private static final char FIRST_ROW_CHAR = 'A';
 	/**
 	 * The row coordinate of the position.
 	 */
@@ -20,6 +21,16 @@ public class Position implements IPosition {
 	 * The column coordinate of the position.
 	 */
 	private final int column;
+	private final int[][] DIRECTIONS = new int[][]{
+			{-1, 0},  // north
+			{0, 1},   // east
+			{1, 0},   // south
+			{0, -1},   // west
+			{1, 1},   // northeast
+			{1, -1},  // northwest
+			{-1, 1},  // southeast
+			{-1, -1} // southwest
+	};
 
 	/**
 	 * Indicates whether the position is occupied by a ship.
@@ -46,7 +57,7 @@ public class Position implements IPosition {
 	 * @param classicColumn the column coordinate of the position
 	 */
 	public Position(char classicRow, int classicColumn) {
-		this.row = Character.toUpperCase(classicRow) - 'A';
+		this.row = Character.toUpperCase(classicRow) - FIRST_ROW_CHAR;
 		this.column = classicColumn-1;
 		this.isOccupied = false;
 		this.isHit = false;
@@ -92,7 +103,7 @@ public class Position implements IPosition {
 	 * @return the traditional row within [A-J]
 	 */
 	public char getClassicRow() {
-		return (char) ('A' + row);
+		return (char) (FIRST_ROW_CHAR + row);
 	}
 
 	/**
@@ -123,7 +134,8 @@ public class Position implements IPosition {
 	 */
 	@Override
 	public boolean isAdjacentTo(IPosition other) {
-		return Math.abs(this.row - other.getRow()) <= 1 && Math.abs(this.column - other.getColumn()) <= 1;
+		boolean isRowAdjacent = Math.abs(this.row - other.getRow()) <= 1 && Math.abs(this.column - other.getColumn()) <= 1;
+		return isRowAdjacent;
 	}
 
 	/**
@@ -137,19 +149,9 @@ public class Position implements IPosition {
 		List<IPosition> adjacents = new ArrayList<IPosition>();
 
 		// Define possible directions (up, right, down, left)
-		int[][] directions = {
-				{-1, 0},  // north
-				{0, 1},   // east
-				{1, 0},   // south
-				{0, -1},   // west
-				{1, 1},   // northeast
-				{1, -1},  // northwest
-				{-1, 1},  // southeast
-				{-1, -1} // southwest
-		};
 
 		// Check each possible direction
-		for (int[] dir : directions) {
+		for (int[] dir : DIRECTIONS) {
 			Position newPosition = new Position(row + dir[0], column + dir[1]);
 			// Only add the position if it's inside the board boundaries
 			if (newPosition.isInside()) {
@@ -233,7 +235,7 @@ public class Position implements IPosition {
 	 */
 	@Override
 	public String toString() {
-		return (char) ('A' + row) + "" + (column + 1);
+		return (char) (FIRST_ROW_CHAR + row) + "" + (column + 1);
 //		return "Row = " + (char) ('A' + row) + ", Column = " + (column + 1);
 	}
 }

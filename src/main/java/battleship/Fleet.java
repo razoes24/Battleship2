@@ -34,19 +34,21 @@ public class Fleet implements IFleet
 
 		while (fleetSize < shipTypes.length) {
 
-			// Build the ship
-			Ship ship = Ship.buildShip(shipTypes[fleetSize], Compass.randomBearing(), Position.randomPosition());
-
-			// Attempt to add the ship to the fleet
-			if (ship != null && randomFleet.addShip(ship)) {
+            // Attempt to add the ship to the fleet
+			if (createRandomShip(shipTypes[fleetSize]) != null && randomFleet.addShip(createRandomShip(shipTypes[fleetSize]))) {
 				fleetSize++; // Increment count if ship is successfully added
 			}
 		}
 		return randomFleet;
 	}
 
+	private static Ship createRandomShip(String shipTypes) {
+		Ship ship = Ship.buildShip(shipTypes, Compass.randomBearing(), Position.randomPosition());
+		return ship;
+	}
 
-    // -----------------------------------------------------
+
+	// -----------------------------------------------------
 
 	/**
 	 * The Ships.
@@ -76,7 +78,7 @@ public class Fleet implements IFleet
 	/**
 	 * Add ship boolean.
 	 *
-	 * @param s the s
+	 * @param ship the ship
 	 * @return the boolean
 	 */
 	/*
@@ -85,14 +87,14 @@ public class Fleet implements IFleet
      * @see battleship.IFleet#addShip(battleship.IShip)
      */
     @Override
-    public boolean addShip(IShip s)
+    public boolean addShip(IShip ship)
     {
-		assert s != null;
+		assert ship != null;
 
 		boolean result = false;
-		if ((ships.size() <= FLEET_SIZE) && (s.isInsideBoard()) && (!colisionRisk(s)))
+		if ((ships.size() <= FLEET_SIZE) && (ship.isInsideBoard()) && (!colisionRisk(ship)))
 		{
-			ships.add(s);
+			ships.add(ship);
 			result = true;
 		}
 		return result;
@@ -209,7 +211,7 @@ public class Fleet implements IFleet
 	 *
 	 * @param ships The list of ships
 	 */
-	public void printShips(List<IShip> ships)
+	public static void printShips(List<IShip> ships)
 	{
 		assert ships != null;
 
