@@ -34,11 +34,8 @@ public class Fleet implements IFleet
 
 		while (fleetSize < shipTypes.length) {
 
-			// Build the ship
-			Ship ship = createRandomShip(shipTypes[fleetSize]);
-
-			// Attempt to add the ship to the fleet
-			if (ship != null && randomFleet.addShip(ship)) {
+            // Attempt to add the ship to the fleet
+			if (createRandomShip(shipTypes[fleetSize]) != null && randomFleet.addShip(createRandomShip(shipTypes[fleetSize]))) {
 				fleetSize++; // Increment count if ship is successfully added
 			}
 		}
