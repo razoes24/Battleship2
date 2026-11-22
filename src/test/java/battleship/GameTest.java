@@ -459,6 +459,62 @@ public class GameTest {
 	}
 
 	@Test
+	@DisplayName("printMyBoard marca como água um tiro numa posição adjacente a um navio afundado")
+	void printMyBoardTiroAdjacente() {
+		Game g = jogoComNavios(new Barge(Compass.NORTH, new Position(5, 5)));
+		g.fireShots(List.of(new Position(5, 5), new Position(5, 4), new Position(0, 0)));
+		saida.reset();
+
+		g.printMyBoard(true, false);
+
+		assertTrue(consola().contains(" F | . . . . o * - . . . |"));
+	}
+
+	// Os asserts só disparam com as assertions ativas (-ea), que é o que o IntelliJ e o Maven fazem nos testes.
+
+	@Test
+	@DisplayName("printBoard com frota nula falha o assert")
+	void printBoardFrotaNula() {
+		assertThrows(AssertionError.class, () -> Game.printBoard(null, new ArrayList<>(), false, false));
+	}
+
+	@Test
+	@DisplayName("printBoard com lista de jogadas nula falha o assert")
+	void printBoardJogadasNulas() {
+		assertThrows(AssertionError.class, () -> Game.printBoard(new Fleet(), null, false, false));
+	}
+
+	@Test
+	@DisplayName("jsonShots com lista nula falha o assert")
+	void jsonShotsNulo() {
+		assertThrows(AssertionError.class, () -> Game.jsonShots(null));
+	}
+
+	@Test
+	@DisplayName("readEnemyFire com scanner nulo falha o assert")
+	void readEnemyFireScannerNulo() {
+		assertThrows(AssertionError.class, () -> game.readEnemyFire(null));
+	}
+
+	@Test
+	@DisplayName("fireShots com lista nula falha o assert")
+	void fireShotsNulo() {
+		assertThrows(AssertionError.class, () -> game.fireShots(null));
+	}
+
+	@Test
+	@DisplayName("fireSingleShot com posição nula falha o assert")
+	void fireSingleShotNulo() {
+		assertThrows(AssertionError.class, () -> game.fireSingleShot(null, false));
+	}
+
+	@Test
+	@DisplayName("repeatedShot com posição nula falha o assert")
+	void repeatedShotNulo() {
+		assertThrows(AssertionError.class, () -> game.repeatedShot(null));
+	}
+
+	@Test
 	@DisplayName("printMyBoard sem mostrar tiros não marca os tiros no tabuleiro")
 	void printMyBoardEscondeTiros() {
 		game.fireShots(List.of(new Position(0, 0), new Position(0, 1), new Position(0, 2)));
