@@ -10,6 +10,8 @@ package battleship;
  */
 public class Caravel extends Ship {
 
+	private static final String CATEGORY = "Caravela";
+
 	/**
 	 * Instantiates a new Caravel.
 	 *
@@ -17,25 +19,22 @@ public class Caravel extends Ship {
 	 * @param pos     The initial position of the ship on the game board.
 	 */
 	public Caravel(Compass bearing, IPosition pos) {
-		super("Caravela", bearing, pos, 2);
+		super(CATEGORY, bearing, pos, 2);
 
 		switch (bearing) {
 			case NORTH:
-				for (int r = 0; r < this.getSize(); r++)
-					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
+				fillVertical(pos);
 				break;
 			case SOUTH:
-				for (int r = 0; r < this.getSize(); r++)
-					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
+				fillVertical(pos);
 				break;
 			case EAST:
-				for (int c = 0; c < this.getSize(); c++)
-					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
+				fillHorizontal(pos);
 				break;
 			case WEST:
-				for (int c = 0; c < this.getSize(); c++)
-					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
+				fillHorizontal(pos);
 				break;
 		}
 	}
+
 }

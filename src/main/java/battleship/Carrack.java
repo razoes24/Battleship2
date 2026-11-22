@@ -12,6 +12,8 @@ import java.util.List;
  */
 public class Carrack extends Ship {
 
+	private static final String CATEGORY = "Nau";
+
 	/**
 	 * Instantiates a new Carrack.
 	 *
@@ -19,7 +21,7 @@ public class Carrack extends Ship {
 	 * @param pos     The initial position of the ship on the game board.
 	 */
 	public Carrack(Compass bearing, IPosition pos) {
-		super("Nau", bearing, pos, 3);
+		super(CATEGORY, bearing, pos, 3);
 
 		switch (bearing) {
 			case SOUTH:
