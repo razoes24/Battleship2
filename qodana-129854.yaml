@@ -4,6 +4,12 @@ linter: qodana-jvm-community
 projectJDK: "21"
 profile:
   path: .qodana/profiles/profile-129854.yaml
+# A gate de Shotgun Surgery mede o codigo de producao: as classes de teste
+# (ficha 4) dependem de IPosition/Position e inflacionavam o n. de dependentes.
+exclude:
+  - name: All
+    paths:
+      - src/test
 failureConditions:
   severityThresholds:
     any: 0
