@@ -10,6 +10,8 @@ package battleship;
  */
 public class Frigate extends Ship {
 
+	private static final String CATEGORY = "Fragata";
+
 	/**
 	 * Instantiates a new Frigate.
 	 *
@@ -17,7 +19,7 @@ public class Frigate extends Ship {
 	 * @param pos     The initial position of the ship on the game board.
 	 */
 	public Frigate(Compass bearing, IPosition pos) {
-		super("Fragata", bearing, pos, 4);
+		super(CATEGORY, bearing, pos, 4);
 
 		switch (bearing) {
 			case NORTH:

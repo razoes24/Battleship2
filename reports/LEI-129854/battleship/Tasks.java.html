@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tasks.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Cobertura dos testes de 129854 (Tasks, Scoreboard, ScoreEntry)</a> &gt; <a href="index.source.html" class="el_package">battleship</a> &gt; <span class="el_source">Tasks.java</span></div><h1>Tasks.java</h1><pre class="source lang-java linenums">package battleship;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/**
+ * The type Tasks.
+ */
+<span class="nc" id="L13">public class Tasks {</span>
+    /**
+     * The constant LOGGER.
+     */
+<span class="fc" id="L17">    private static final Logger LOGGER = LogManager.getLogger();</span>
+
+    /**
+     * The constant GOODBYE_MESSAGE.
+     */
+    private static final String GOODBYE_MESSAGE = &quot;Bons ventos!&quot;;
+
+    /**
+     * Strings to be used by the user
+     */
+    private static final String AJUDA = &quot;ajuda&quot;;
+    private static final String GERAFROTA = &quot;gerafrota&quot;;
+    private static final String LEFROTA = &quot;lefrota&quot;;
+    private static final String DESISTIR = &quot;desisto&quot;;
+    private static final String RAJADA = &quot;rajada&quot;;
+    private static final String TIROS = &quot;tiros&quot;;
+    private static final String MAPA = &quot;mapa&quot;;
+    private static final String STATUS = &quot;estado&quot;;
+    private static final String SIMULA = &quot;simula&quot;;
+    private static final String EXPORTAPDF = &quot;exportapdf&quot;;
+    private static final String SCOREBOARD = &quot;scoreboard&quot;;
+    private static final String HISTORICOBD = &quot;historicobd&quot;;
+
+    /**
+     * This task also tests the fighting element of a round of three shots
+     */
+    public static void menu() {
+
+<span class="fc" id="L45">        IFleet myFleet = null;</span>
+<span class="fc" id="L46">        IGame game = null;</span>
+
+        // Lista para guardar o histórico das jogadas
+<span class="fc" id="L49">        List&lt;String&gt; historico = new ArrayList&lt;&gt;();</span>
+
+        // Relógio que mede o tempo gasto em cada jogada
+<span class="fc" id="L52">        GameTimer timer = new GameTimer();</span>
+
+<span class="fc" id="L54">        menuHelp();</span>
+
+<span class="fc" id="L56">        System.out.print(&quot;&gt; &quot;);</span>
+<span class="fc" id="L57">        Scanner in = new Scanner(System.in);</span>
+<span class="fc" id="L58">        String command = in.next();</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        while (!command.equals(DESISTIR)) {</span>
+
+<span class="fc bfc" id="L61" title="All 12 branches covered.">            switch (command) {</span>
+                case GERAFROTA:
+<span class="fc" id="L63">                    myFleet = Fleet.createRandom();</span>
+<span class="fc" id="L64">                    game = new Game(myFleet);</span>
+<span class="fc" id="L65">                    JogadasRepository.novoJogo();</span>
+<span class="fc" id="L66">                    timer.startGame();</span>
+<span class="fc" id="L67">                    game.printMyBoard(false, true);</span>
+<span class="fc" id="L68">                    break;</span>
+                case LEFROTA:
+<span class="fc" id="L70">                    myFleet = buildFleet(in);</span>
+<span class="fc" id="L71">                    game = new Game(myFleet);</span>
+<span class="fc" id="L72">                    JogadasRepository.novoJogo();</span>
+<span class="fc" id="L73">                    timer.startGame();</span>
+<span class="fc" id="L74">                    game.printMyBoard(false, true);</span>
+<span class="fc" id="L75">                    break;</span>
+                case STATUS:
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                    if (myFleet != null)</span>
+<span class="fc" id="L78">                        myFleet.printStatus();</span>
+                    break;
+                case MAPA:
+<span class="fc bfc" id="L81" title="All 2 branches covered.">                    if (myFleet != null)</span>
+<span class="fc" id="L82">                        game.printMyBoard(false, true);</span>
+                    break;
+                case RAJADA:
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                    if (game != null) {</span>
+                        // Guarda o JSON da jogada retornado pela readEnemyFire
+<span class="fc" id="L87">                        String jsonJogada = game.readEnemyFire(in);</span>
+<span class="fc" id="L88">                        historico.add(jsonJogada);</span>
+<span class="fc" id="L89">                        timer.endMove();</span>
+
+<span class="fc" id="L91">                        myFleet.printStatus();</span>
+<span class="fc" id="L92">                        game.printMyBoard(true, false);</span>
+
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">                        if (game.getRemainingShips() == 0) {</span>
+                            // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
+<span class="nc" id="L96">                            Scoreboard.add(game.getAlienMoves().size());</span>
+                            // O programa termina a seguir, por isso exporta o PDF automaticamente
+<span class="nc" id="L98">                            exportPdf(historico);</span>
+<span class="nc" id="L99">                            timer.printTotal();</span>
+<span class="nc" id="L100">                            game.over();</span>
+<span class="nc" id="L101">                            System.exit(0);</span>
+                        }
+<span class="fc" id="L103">                    }</span>
+                    break;
+                case SIMULA:
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">                    if (game != null) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                        while (game.getRemainingShips() &gt; 0) {</span>
+                            // Guarda o JSON da jogada retornado pela randomEnemyFire
+<span class="nc" id="L109">                            String jsonJogada = game.randomEnemyFire();</span>
+<span class="nc" id="L110">                            historico.add(jsonJogada);</span>
+<span class="nc" id="L111">                            JogadasRepository.guardar(historico.size(), null, jsonJogada);</span>
+
+<span class="nc" id="L113">                            myFleet.printStatus();</span>
+<span class="nc" id="L114">                            game.printMyBoard(true, false);</span>
+                            try {
+<span class="nc" id="L116">                                Thread.sleep(3000);</span>
+<span class="nc" id="L117">                            } catch (InterruptedException e) {</span>
+<span class="nc" id="L118">                                Thread.currentThread().interrupt();</span>
+<span class="nc" id="L119">                            }</span>
+<span class="nc" id="L120">                        }</span>
+
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                        if (game.getRemainingShips() == 0) {</span>
+                            // Guarda o resultado do jogo no scoreboard (JSON, com Gson)
+<span class="nc" id="L124">                            Scoreboard.add(game.getAlienMoves().size());</span>
+                            // O programa termina a seguir, por isso exporta o PDF automaticamente
+<span class="nc" id="L126">                            exportPdf(historico);</span>
+<span class="nc" id="L127">                            game.over();</span>
+<span class="nc" id="L128">                            System.exit(0);</span>
+                        }
+                    }
+                    break;
+                case TIROS:
+<span class="fc bfc" id="L133" title="All 2 branches covered.">                    if (game != null)</span>
+<span class="fc" id="L134">                        game.printMyBoard(true, true);</span>
+                    break;
+                case SCOREBOARD:
+<span class="fc" id="L137">                    Scoreboard.show();</span>
+<span class="fc" id="L138">                    break;</span>
+                case HISTORICOBD:
+<span class="fc" id="L140">                    JogadasRepository.listar().forEach(System.out::println);</span>
+<span class="fc" id="L141">                    break;</span>
+                case AJUDA:
+<span class="fc" id="L143">                    menuHelp();</span>
+<span class="fc" id="L144">                    break;</span>
+                case EXPORTAPDF:
+<span class="fc" id="L146">                    exportPdf(historico);</span>
+<span class="fc" id="L147">                    break;</span>
+                default:
+<span class="fc" id="L149">                    System.out.println(&quot;Que comando é esse??? Repete ...&quot;);</span>
+            }
+<span class="fc" id="L151">            System.out.print(&quot;&gt; &quot;);</span>
+<span class="fc" id="L152">            command = in.next();</span>
+        }
+<span class="fc" id="L154">        timer.printTotal();</span>
+<span class="fc" id="L155">        System.out.println(GOODBYE_MESSAGE);</span>
+<span class="fc" id="L156">    }</span>
+
+    /**
+     * Exports the move history to a PDF file.
+     *
+     * @param historico the list of moves (JSON strings)
+     */
+    private static void exportPdf(List&lt;String&gt; historico) {
+        try {
+<span class="fc" id="L165">            PdfExporter.export(historico, &quot;jogadas.pdf&quot;);</span>
+<span class="fc" id="L166">            System.out.println(&quot;PDF gerado com sucesso: jogadas.pdf&quot;);</span>
+<span class="fc" id="L167">        } catch (Exception e) {</span>
+<span class="fc" id="L168">            System.out.println(&quot;Erro ao gerar PDF: &quot; + e.getMessage());</span>
+<span class="fc" id="L169">        }</span>
+<span class="fc" id="L170">    }</span>
+
+    /**
+     * This function provides help information about the menu commands.
+     */
+    public static void menuHelp() {
+<span class="fc" id="L176">        System.out.println(&quot;======================= AJUDA DO MENU =========================&quot;);</span>
+<span class="fc" id="L177">        System.out.println(&quot;Digite um dos comandos abaixo para interagir com o jogo:&quot;);</span>
+<span class="fc" id="L178">        System.out.println(&quot;- &quot; + GERAFROTA + &quot;: Gera uma frota aleatória de navios.&quot;);</span>
+<span class="fc" id="L179">        System.out.println(&quot;- &quot; + LEFROTA + &quot;: Permite criar e carregar uma frota personalizada.&quot;);</span>
+<span class="fc" id="L180">        System.out.println(&quot;- &quot; + STATUS + &quot;: Mostra o status atual da frota.)&quot;);</span>
+<span class="fc" id="L181">        System.out.println(&quot;- &quot; + MAPA + &quot;: Exibe o mapa da frota.&quot;);</span>
+<span class="fc" id="L182">        System.out.println(&quot;- &quot; + RAJADA + &quot;: Realiza uma rajada de disparos.&quot;);</span>
+<span class="fc" id="L183">        System.out.println(&quot;- &quot; + SIMULA + &quot;: Simula um jogo completo.&quot;);</span>
+<span class="fc" id="L184">        System.out.println(&quot;- &quot; + TIROS + &quot;: Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)&quot;);</span>
+<span class="fc" id="L185">        System.out.println(&quot;- &quot; + SCOREBOARD + &quot;: Mostra o scoreboard dos jogos anteriores.&quot;);</span>
+<span class="fc" id="L186">        System.out.println(&quot;- &quot; + HISTORICOBD + &quot;: Lista as jogadas guardadas na base de dados.&quot;);</span>
+<span class="fc" id="L187">        System.out.println(&quot;- &quot; + EXPORTAPDF + &quot;: Exporta o histórico de jogadas para um ficheiro PDF.&quot;);</span>
+<span class="fc" id="L188">        System.out.println(&quot;- &quot; + DESISTIR + &quot;: Encerra o jogo.&quot;);</span>
+<span class="fc" id="L189">        System.out.println(&quot;===============================================================&quot;);</span>
+<span class="fc" id="L190">    }</span>
+
+    /**
+     * This operation allows the build up of a fleet, given user data
+     *
+     * @param in The scanner to read from
+     * @return The fleet that has been built
+     */
+    public static Fleet buildFleet(Scanner in) {
+
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        assert in != null;</span>
+
+<span class="fc" id="L202">        Fleet fleet = new Fleet();</span>
+<span class="fc" id="L203">        int i = 0;</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        while (i &lt; Fleet.FLEET_SIZE) {</span>
+<span class="fc" id="L205">            IShip s = readShip(in);</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">            if (s != null) {</span>
+<span class="fc" id="L207">                boolean success = fleet.addShip(s);</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">                if (success)</span>
+<span class="fc" id="L209">                    i++;</span>
+                else
+<span class="fc" id="L211">                    LOGGER.info(&quot;Falha na criacao de {} {} {}&quot;, s.getCategory(), s.getBearing(), s.getPosition());</span>
+<span class="fc" id="L212">            } else {</span>
+<span class="fc" id="L213">                LOGGER.info(&quot;Navio desconhecido!&quot;);</span>
+            }
+<span class="fc" id="L215">        }</span>
+<span class="fc" id="L216">        LOGGER.info(&quot;{} navios adicionados com sucesso!&quot;, i);</span>
+<span class="fc" id="L217">        return fleet;</span>
+    }
+
+    /**
+     * This operation reads data about a ship, build it and returns it
+     *
+     * @param in The scanner to read from
+     * @return The created ship based on the data that has been read
+     */
+    public static Ship readShip(Scanner in) {
+
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        assert in != null;</span>
+
+<span class="fc" id="L230">        String shipKind = in.next();</span>
+<span class="fc" id="L231">        Position pos = readPosition(in);</span>
+<span class="fc" id="L232">        char c = in.next().charAt(0);</span>
+<span class="fc" id="L233">        Compass bearing = Compass.charToCompass(c);</span>
+<span class="fc" id="L234">        return Ship.buildShip(shipKind, bearing, pos);</span>
+    }
+
+    /**
+     * This operation allows reading a position in the map
+     *
+     * @param in The scanner to read from
+     * @return The position that has been read
+     */
+    public static Position readPosition(Scanner in) {
+
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        assert in != null;</span>
+
+<span class="fc" id="L247">        int row = in.nextInt();</span>
+<span class="fc" id="L248">        int column = in.nextInt();</span>
+<span class="fc" id="L249">        return new Position(row, column);</span>
+    }
+
+    /**
+     * This operation allows reading a position in the map
+     *
+     * @param in The scanner to read from
+     * @return The classic position that has been read
+     */
+    public static IPosition readClassicPosition(Scanner in) {
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        if (!in.hasNext()) {</span>
+<span class="fc" id="L260">            throw new IllegalArgumentException(&quot;Nenhuma posição válida encontrada!&quot;);</span>
+        }
+
+<span class="fc" id="L263">        String part1 = in.next();</span>
+<span class="fc" id="L264">        String part2 = null;</span>
+
+<span class="fc bfc" id="L266" title="All 2 branches covered.">        if (in.hasNextInt()) {</span>
+<span class="fc" id="L267">            part2 = in.next();</span>
+        }
+
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        String input = (part2 != null) ? part1 + part2 : part1;</span>
+<span class="fc" id="L271">        input = input.toUpperCase();</span>
+
+<span class="fc bfc" id="L273" title="All 2 branches covered.">        if (input.matches(&quot;[A-Z]\\d+&quot;)) {</span>
+<span class="fc" id="L274">            char column = input.charAt(0);</span>
+<span class="fc" id="L275">            int row = Integer.parseInt(input.substring(1));</span>
+<span class="fc" id="L276">            return new Position(column, row);</span>
+<span class="pc bpc" id="L277" title="1 of 6 branches missed.">        } else if (part2 != null &amp;&amp; part1.matches(&quot;[A-Z]&quot;) &amp;&amp; part2.matches(&quot;\\d+&quot;)) {</span>
+<span class="nc" id="L278">            char column = part1.charAt(0);</span>
+<span class="nc" id="L279">            int row = Integer.parseInt(part2);</span>
+<span class="nc" id="L280">            return new Position(column, row);</span>
+        } else {
+<span class="fc" id="L282">            throw new IllegalArgumentException(&quot;Formato inválido. Use 'A3', 'A 3' ou similar.&quot;);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
