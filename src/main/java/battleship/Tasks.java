@@ -66,17 +66,11 @@ public class Tasks {
             switch (command) {
                 case GERAFROTA:
                     myFleet = Fleet.createRandom();
-                    game = new Game(myFleet);
-                    JogadasRepository.novoJogo();
-                    timer.startGame();
-                    game.printMyBoard(false, true);
+                    game = startNewGame(myFleet, timer);
                     break;
                 case LEFROTA:
                     myFleet = buildFleet(in);
-                    game = new Game(myFleet);
-                    JogadasRepository.novoJogo();
-                    timer.startGame();
-                    game.printMyBoard(false, true);
+                    game = startNewGame(myFleet, timer);
                     break;
                 case STATUS:
                     if (myFleet != null)
@@ -158,6 +152,22 @@ public class Tasks {
         }
         timer.printTotal();
         System.out.println(GOODBYE_MESSAGE);
+    }
+
+    /**
+     * Starts a new game with the given fleet: registers it in the database,
+     * starts the game timer and prints the board.
+     *
+     * @param fleet the fleet of the new game
+     * @param timer the game timer
+     * @return the new game
+     */
+    private static IGame startNewGame(IFleet fleet, GameTimer timer) {
+        IGame game = new Game(fleet);
+        JogadasRepository.novoJogo();
+        timer.startGame();
+        game.printMyBoard(false, true);
+        return game;
     }
 
     /**
